@@ -6,4 +6,5 @@ func RouterInit(r *gin.RouterGroup) {
 	User(r)
 	Role(r)
 	TrashCategory(r)
+	TrashTransaction(r)
 }
