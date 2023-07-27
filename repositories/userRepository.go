@@ -40,7 +40,10 @@ func (r *repository) DeleteUser(user *models.MstUser) (*models.MstUser, error) {
 func (r *repository) FindUserByID(id uuid.UUID) (*models.MstUser, error) {
 	var users models.MstUser
 
-	err := r.db.Preload("Role").Where("id = ?", id).First(&users).Error
+	err := r.db.Preload("Role").
+		Preload("Transaction").
+		Preload("TransactionCreated").
+		Where("id = ?", id).First(&users).Error
 	return &users, err
 }
 
@@ -72,7 +75,9 @@ func (r *repository) FindAllUsers(limit, offset int, filter dto.UserFilter, sear
 	}
 
 	// preloading, used for get relation data for results
-	trx = trx.Preload("Role")
+	trx = trx.Preload("Role").
+		Preload("Transaction").
+		Preload("TransactionCreated")
 
 	// count transaction result
 	trx.Model(&models.MstUser{}).
