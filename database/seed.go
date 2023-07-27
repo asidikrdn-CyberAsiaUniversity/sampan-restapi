@@ -71,5 +71,53 @@ func RunSeeder() {
 		fmt.Println("Success seeding super admin...")
 	}
 
+	// Trash Category
+	if postgres.DB.Migrator().HasTable(&models.MstTrashCategory{}) {
+		newTrash := []models.MstTrashCategory{}
+
+		newTrash = append(newTrash, models.MstTrashCategory{
+			Category: "KORAN",
+			Price:    2000,
+		})
+		newTrash = append(newTrash, models.MstTrashCategory{
+			Category: "BUKU",
+			Price:    1000,
+		})
+		newTrash = append(newTrash, models.MstTrashCategory{
+			Category: "DUPLEX",
+			Price:    4000,
+		})
+		newTrash = append(newTrash, models.MstTrashCategory{
+			Category: "KARDUS",
+			Price:    2000,
+		})
+		newTrash = append(newTrash, models.MstTrashCategory{
+			Category: "BOTOL MINERAL",
+			Price:    3000,
+		})
+		newTrash = append(newTrash, models.MstTrashCategory{
+			Category: "GELAS WARNA",
+			Price:    4000,
+		})
+		newTrash = append(newTrash, models.MstTrashCategory{
+			Category: "GELAS MINERAL",
+			Price:    1500,
+		})
+		newTrash = append(newTrash, models.MstTrashCategory{
+			Category: "BESI",
+			Price:    5000,
+		})
+
+		for _, trash := range newTrash {
+			errAddTrash := postgres.DB.Create(&trash).Error
+			if errAddTrash != nil {
+				fmt.Println(errAddTrash.Error())
+				log.Fatal("Seeding failed")
+			}
+		}
+
+		fmt.Println("Success seeding master trash...")
+	}
+
 	fmt.Println("Seeding completed successfully")
 }
