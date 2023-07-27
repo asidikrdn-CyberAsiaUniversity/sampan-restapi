@@ -4,13 +4,21 @@ import (
 	"github.com/google/uuid"
 )
 
-type CreateUserRequest struct {
+type CreateStaffRequest struct {
 	FullName string `json:"fullname" form:"fullname" binding:"required"`
 	Email    string `json:"email" form:"email" binding:"required"`
 	Phone    string `json:"phone" form:"phone" binding:"required"`
 	Address  string `json:"address" form:"address" binding:"required"`
 	Password string `json:"password" form:"password" binding:"required"`
 	RoleID   uint   `json:"roleId" form:"roleId" binding:"required"`
+}
+
+type CreateCustomerRequest struct {
+	FullName string `json:"fullname" form:"fullname" binding:"required"`
+	Email    string `json:"email" form:"email" binding:"required"`
+	Phone    string `json:"phone" form:"phone" binding:"required"`
+	Address  string `json:"address" form:"address" binding:"required"`
+	Password string `json:"password" form:"password"`
 }
 
 type UpdateUserRequest struct {

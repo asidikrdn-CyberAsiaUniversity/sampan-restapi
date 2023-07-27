@@ -16,6 +16,7 @@ type MstUser struct {
 	IsPhoneVerified bool
 	Address         string `gorm:"type:text"`
 	Password        string `gorm:"type:varchar(255)"`
+	LoginAccess     bool
 	RoleID          uint
 	Image           string `gorm:"type:varchar(255)"`
 	CreatedAt       time.Time

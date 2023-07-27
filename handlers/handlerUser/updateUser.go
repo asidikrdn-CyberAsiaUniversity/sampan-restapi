@@ -69,8 +69,8 @@ func (h *handlerUser) UpdateUserByID(c *gin.Context) {
 		user.Address = request.Address
 	}
 
-	// update role
-	if request.RoleID != 0 {
+	// update role (except for update to superadmin)
+	if request.RoleID != 0 && request.RoleID != 1 {
 		user.RoleID = request.RoleID
 	}
 

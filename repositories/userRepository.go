@@ -55,17 +55,20 @@ func (r *repository) FindAllUsers(limit, offset int, filter dto.UserFilter, sear
 
 	if filter.RoleID != 0 {
 		trx = trx.Where("role_id = ?", filter.RoleID)
+	} else {
+		trx = trx.Where("role_id <> ?", 3) // if filter query not exist, only get superadmin and admin
 	}
 
 	// join tables, used for complex searching on relation table
 	trx = trx.Joins("JOIN mst_roles ON mst_roles.id = mst_users.role_id")
 
 	if searchQuery != "" {
-		trx = trx.Where("full_name LIKE ?", fmt.Sprintf("%s%s%s", "%", searchQuery, "%")).
-			Or("email LIKE ?", fmt.Sprintf("%s%s%s", "%", searchQuery, "%")).
-			Or("phone LIKE ?", fmt.Sprintf("%s%s%s", "%", searchQuery, "%")).
-			Or("address LIKE ?", fmt.Sprintf("%s%s%s", "%", searchQuery, "%")).
-			Or("mst_roles.role LIKE ?", fmt.Sprintf("%s%s%s", "%", searchQuery, "%"))
+		trx = trx.Where("full_name LIKE ? OR email LIKE ? OR phone LIKE ? OR address LIKE ? OR mst_roles.role LIKE ?",
+			fmt.Sprintf("%%%s%%", searchQuery),
+			fmt.Sprintf("%%%s%%", searchQuery),
+			fmt.Sprintf("%%%s%%", searchQuery),
+			fmt.Sprintf("%%%s%%", searchQuery),
+			fmt.Sprintf("%%%s%%", searchQuery))
 	}
 
 	// preloading, used for get relation data for results

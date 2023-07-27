@@ -17,17 +17,20 @@ func User(r *gin.RouterGroup) {
 	r.POST("/login", h.Login)
 
 	// create new user
-	r.POST("/users", middleware.AdminAuth(), middleware.UploadSingleFile(), h.CreateUser)
+	r.POST("/users/staff", middleware.SuperAdminAuth(), middleware.UploadSingleFile(), h.AddStaff)                // add new staff
+	r.POST("/users/customer", middleware.AdminAuth(), middleware.UploadSingleFile(), h.AddCustomer)               // add new customer
+	r.POST("/users/customer/self-register", middleware.AdminAuth(), middleware.UploadSingleFile(), h.AddCustomer) // self register customer, customer will be have user account to login
 
 	// find/get user
-	r.GET("/users", middleware.AdminAuth(), h.FindAllUsers)
+	r.GET("/users/staff", middleware.AdminAuth(), h.FindAllStaff)
+	r.GET("/users/customer", middleware.AdminAuth(), h.FindAllCustomer)
 	r.GET("/users/:id", middleware.AdminAuth(), h.FindUserByID)
 	r.GET("/users/profile", middleware.UserAuth(), h.GetProfile)
 
 	// update user
-	r.POST("/users/:id", middleware.AdminAuth(), middleware.UploadSingleFile(), h.UpdateUserByID)
-	r.POST("/users/profile", middleware.UserAuth(), middleware.UploadSingleFile(), h.UpdateProfile)
+	r.PATCH("/users/:id", middleware.AdminAuth(), middleware.UploadSingleFile(), h.UpdateUserByID)
+	r.PATCH("/users/profile", middleware.UserAuth(), middleware.UploadSingleFile(), h.UpdateProfile)
 
 	// delete user
-	r.DELETE("/users/:id", middleware.SuperAdminAuth(), h.DeleteUser)
+	r.DELETE("/users/:id", middleware.AdminAuth(), h.DeleteUser)
 }

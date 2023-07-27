@@ -36,6 +36,16 @@ func (h *handlerUser) Login(c *gin.Context) {
 		return
 	}
 
+	// check is user have login access
+	if !user.LoginAccess {
+		response := dto.Result{
+			Status:  http.StatusBadRequest,
+			Message: "You don't have login access",
+		}
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
 	// check password
 	if isPasswordValid := bcrypt.CheckPassword(request.Password, user.Password); !isPasswordValid {
 		response := dto.Result{

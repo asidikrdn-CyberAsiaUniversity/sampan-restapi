@@ -50,6 +50,7 @@ func RunSeeder() {
 				FullName:        "Super Admin",
 				Email:           os.Getenv("SUPERADMIN_EMAIL"),
 				IsEmailVerified: true,
+				LoginAccess:     true,
 				RoleID:          1,
 			}
 
