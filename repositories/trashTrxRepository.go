@@ -20,6 +20,7 @@ type TrashTransactionRepository interface {
 	FindTrashCategoryByID(trashID uint) (*models.MstTrashCategory, error)
 	// check user
 	FindUserByID(id uuid.UUID) (*models.MstUser, error)
+	GetTransactionSummary() (*[]models.TrxSummary, error)
 }
 
 func (r *repository) FindAllTrashTransaction(limit, offset int, filter dto.TrashTransactionFilter, searchQuery string) (*[]models.TrxTrashCustomer, int64, error) {
@@ -74,6 +75,7 @@ func (r *repository) FindAllTrashTransaction(limit, offset int, filter dto.Trash
 
 	err := trx.Limit(limit).
 		Offset(offset).
+		Order("created_at DESC").
 		Find(&transactionTrash).Error
 
 	return &transactionTrash, totalTransactionTrash, err
@@ -108,4 +110,22 @@ func (r *repository) DeleteTrashTransaction(trashTransaction *models.TrxTrashCus
 	err := r.db.Delete(trashTransaction).Error
 
 	return trashTransaction, err
+}
+
+func (r *repository) GetTransactionSummary() (*[]models.TrxSummary, error) {
+	var transactions []models.TrxSummary
+
+	rows, err := r.db.Raw("select mtc.category, count(ttc.id) as jumlah_transaksi from trx_trash_customers ttc  join mst_trash_categories mtc on ttc.trash_id = mtc.id group by mtc.category order by jumlah_transaksi desc;").Rows()
+	defer rows.Close()
+	for rows.Next() {
+		var trx models.TrxSummary
+		rows.Scan(&trx.TrashCategory, &trx.TransactionCount)
+		transactions = append(transactions, trx)
+		// fmt.Println("rows :", rows)
+		// fmt.Println("trx :", trx)
+		// fmt.Println("transactions :", transactions)
+
+	}
+
+	return &transactions, err
 }

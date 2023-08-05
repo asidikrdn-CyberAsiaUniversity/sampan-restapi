@@ -13,6 +13,9 @@ func TrashTransaction(r *gin.RouterGroup) {
 	trashTransactionRepository := repositories.MakeRepository(postgres.DB)
 	h := handlerTrashTransaction.HandlerTrashTransaction(trashTransactionRepository)
 
+	// Get Summary Transaction
+	r.GET("/dashboard", middleware.AdminAuth(), h.GetTrxSummary)
+
 	// find All Transaction
 	r.GET("/trash/transactions", middleware.AdminAuth(), h.FindAllTrashTransaction)
 
