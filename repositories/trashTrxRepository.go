@@ -66,9 +66,15 @@ func (r *repository) FindAllTrashTransaction(limit, offset int, filter dto.Trash
 	}
 
 	// preloading, used for get relation data for results
-	trx = trx.Preload("TrashCategory").
-		Preload("User").Preload("User.Role").
-		Preload("Creator").Preload("Creator.Role")
+	trx = trx.Preload("TrashCategory", func(db *gorm.DB) *gorm.DB {
+		return db.Unscoped()
+	}).
+		Preload("User", func(db *gorm.DB) *gorm.DB {
+			return db.Unscoped() // agar data relasi terkait dapat tetap ditarik walau sudah dihapus
+		}).Preload("User.Role").
+		Preload("Creator", func(db *gorm.DB) *gorm.DB {
+			return db.Unscoped()
+		}).Preload("Creator.Role")
 
 	trx.Model(&models.TrxTrashCustomer{}).
 		Count(&totalTransactionTrash)
@@ -84,9 +90,15 @@ func (r *repository) FindAllTrashTransaction(limit, offset int, filter dto.Trash
 func (r *repository) FindTrashTransactionByID(trashTransactionID uuid.UUID) (*models.TrxTrashCustomer, error) {
 	var trash models.TrxTrashCustomer
 
-	err := r.db.Preload("TrashCategory").
-		Preload("User").Preload("User.Role").
-		Preload("Creator").Preload("Creator.Role").
+	err := r.db.Preload("TrashCategory", func(db *gorm.DB) *gorm.DB {
+		return db.Unscoped()
+	}).
+		Preload("User", func(db *gorm.DB) *gorm.DB {
+			return db.Unscoped()
+		}).Preload("User.Role").
+		Preload("Creator", func(db *gorm.DB) *gorm.DB {
+			return db.Unscoped()
+		}).Preload("Creator.Role").
 		Where("id = ?", trashTransactionID).
 		First(&trash).Error
 
